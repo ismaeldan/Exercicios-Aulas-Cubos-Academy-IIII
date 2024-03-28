@@ -1,7 +1,7 @@
 const knex = require('../database/connection')
 
 const agenda = async (req, res) => {
-  //const agenda = await knex('agenda').debug()
+  const agenda = await knex('agenda').debug()
 
   //const agenda = await knex('agenda').where('id', 2).debug()
 
@@ -39,22 +39,22 @@ const agenda = async (req, res) => {
   //   .first()
   //   .debug()
 
-  const ismael = {
-    nome: 'Ismael Dantas',
-    email: 'ismael@email.com',
-    telefone: '(11) 9565-4619'
-  }
+  // const ismael = {
+  //   nome: 'Ismael Dantas',
+  //   email: 'ismael@email.com',
+  //   telefone: '(11) 9565-4619'
+  // }
 
-  const claudia = {
-    nome: 'Claudia Oliveira',
-    email: 'claudia@email.com',
-    telefone: '(11) 6824-6411'
-  }
+  // const claudia = {
+  //   nome: 'Claudia Oliveira',
+  //   email: 'claudia@email.com',
+  //   telefone: '(11) 6824-6411'
+  // }
 
-  const agenda = await knex('agenda')
-    .insert([ismael, claudia])
-    .returning('*')
-    .debug()
+  // const agenda = await knex('agenda')
+  //   .insert([ismael, claudia])
+  //   .returning('*')
+  //   .debug()
 
   return res.json(agenda)
 }
@@ -81,8 +81,40 @@ const deleteAgenda = async (req, res) => {
   return res.json(agendadelete)
 }
 
+const anotacoes = async (req, res) => {
+  const { id } = req.params
+  const { nota } = req.body
+
+  const anotacao = await knex('anotacoes')
+    .insert({
+      agenda_id: id,
+      nota: nota
+    })
+    .returning('*')
+
+  return res.json(anotacao)
+}
+
+const listaAnotacoes = async (req, res) => {
+  // const anotacao = await knex('anotacoes')
+  //   .join('agenda', 'anotacoes.agenda_id', 'agenda.id')
+  //   .select('anotacoes.*', 'agenda.nome')
+
+  const anotacao = await knex('anotacoes')
+    .leftJoin('agenda', 'anotacoes.agenda_id', 'agenda.id')
+    .select('anotacoes.*', 'agenda.nome')
+
+  // const anotacao = await knex('anotacoes')
+  //   .rightJoin('agenda', 'anotacoes.agenda_id', 'agenda.id')
+  //   .select('anotacoes.*', 'agenda.nome')
+
+  return res.json(anotacao)
+}
+
 module.exports = {
   agenda,
   atualizaAgenda,
-  deleteAgenda
+  deleteAgenda,
+  anotacoes,
+  listaAnotacoes
 }
